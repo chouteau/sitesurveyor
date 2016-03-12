@@ -1,0 +1,8 @@
+{
+	"ServiceName": "SiteSurveyor",
+	"ServiceDisplayName": "Web sites surveyor",
+	"ServiceDescription": "Monitor web site and notify if is down",
+	"UpdateUriList": [ ],
+	"ScanIntervalInSeconds": "60",
+	"ApiKey": null
+}

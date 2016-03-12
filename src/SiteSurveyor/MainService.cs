@@ -11,11 +11,10 @@ using TasksOnTime.Scheduling;
 
 namespace SiteSurveyor
 {
-	public partial class MainService : ServiceBase
+	public class MainServiceHost 
 	{
-		public MainService()
+		public MainServiceHost()
 		{
-			InitializeComponent();
 		}
 
 		public void Initialize()
@@ -33,13 +32,7 @@ namespace SiteSurveyor
 			Scheduler.Start();
 		}
 
-		protected override void OnStart(string[] args)
-		{
-			Initialize();
-			Start();
-		}
-
-		protected override void OnStop()
+		public void Stop()
 		{
 			Scheduler.Stop();
 		}
