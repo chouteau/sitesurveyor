@@ -42,7 +42,7 @@
       <HintPath>..\..\packages\Flurl.2.3.0\lib\portable40-net40+sl5+win8+wp8+wpa81\Flurl.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Palace, Version=2.4.13.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Palace.2.4.13\lib\Palace.exe</HintPath>
@@ -62,18 +62,19 @@
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
-    <Reference Include="TasksOnTime, Version=4.1.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\TasksOnTime.4.1.11.0\lib\TasksOnTime.dll</HintPath>
+    <Reference Include="TasksOnTime, Version=4.1.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TasksOnTime.4.1.12\lib\TasksOnTime.dll</HintPath>
     </Reference>
-    <Reference Include="TasksOnTime.Scheduling, Version=1.1.6.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\TasksOnTime.Scheduling.1.1.6.2\lib\TasksOnTime.Scheduling.dll</HintPath>
+    <Reference Include="TasksOnTime.Scheduling, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TasksOnTime.Scheduling.1.2.8\lib\TasksOnTime.Scheduling.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainService.cs" />
+    <Compile Include="MainServiceHost.cs" />
     <Compile Include="Models\History.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\StatusResult.cs" />
     <Compile Include="Models\UrlToMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\SmsService.cs" />

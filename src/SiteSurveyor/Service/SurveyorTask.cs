@@ -29,13 +29,14 @@ namespace SiteSurveyor.Service
 			foreach (var item in urlList)
 			{
 				System.Diagnostics.Trace.WriteLine(string.Format("Check url : {0}", item.Url), "info");
-				if (IsDown(item.Url))
+				var result = IsDown(item.Url).Result;
+				if (result.IsDown)
 				{
-					System.Diagnostics.Trace.TraceError(string.Format("error url : {0}", item.Url), "error");
+					System.Diagnostics.Trace.TraceError(string.Format("error url : {0} {1}", item.Url, result.ErrorMessage), "error");
 
 					var smsService = new SmsService();
 					var message = new Models.Message();
-					message.Content = string.Format("site [{0}] is down !", item.Url);
+					message.Content = $"[{item.Url}] down detected from [{System.Environment.MachineName}] ! {result.ErrorMessage}";
 					foreach (var phone in item.PhoneNumberList)
 					{
 						message.MobileNumber = phone;
@@ -52,7 +53,7 @@ namespace SiteSurveyor.Service
 			}
 		}
 
-		private bool IsDown(string url)
+		private async Task<Models.StatusResult> IsDown(string url)
 		{
 			var handler = new HttpClientHandler()
 			{
@@ -62,22 +63,52 @@ namespace SiteSurveyor.Service
 			};
 
 			var httpclient = new HttpClient(handler);
+			httpclient.Timeout = TimeSpan.FromSeconds(10);
 			httpclient.DefaultRequestHeaders.Add("UserAgent", "SiteSurveyor/1.0");
 
-			var result = false;
-			var response = httpclient.GetAsync(url).ContinueWith((task) =>
-            {
-				if (task.IsFaulted)
+			var result = new Models.StatusResult();
+			await httpclient.GetAsync(url).ContinueWith(task =>
+			{
+				if (task.IsCanceled)
 				{
-					result = true;
+					result.IsDown = true;
+					result.ErrorMessage = "This site cant be reached";
 				}
-				if (task.Result.StatusCode != HttpStatusCode.OK)
+				else if (task.IsFaulted)
 				{
-					result = true;
+					result.IsDown = true;
+					result.ErrorMessage = GetErrorMessage(task.Exception);
 				}
-			}).Wait(5 * 1000);
+				else
+				{
+					try
+					{
+						var response = task.Result;
+						response.EnsureSuccessStatusCode();
+						result.IsDown = false;
+					}
+					catch (Exception ex)
+					{
+						result.ErrorMessage = GetErrorMessage(ex);
+					}
+				}
+			});
 
 			return result;
+		}
+
+		private string GetErrorMessage(Exception ex)
+		{
+			var x = ex;
+			while (true)
+			{
+				if (x.InnerException == null)
+				{
+					break;
+				}
+				x = x.InnerException;
+			}
+			return x.Message;
 		}
 	}
 }

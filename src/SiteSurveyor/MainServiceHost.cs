@@ -25,6 +25,8 @@ namespace SiteSurveyor
 					.EveryMinute(1);
 
 			Scheduler.Add(task);
+
+
 		}
 
 		public void Start()
