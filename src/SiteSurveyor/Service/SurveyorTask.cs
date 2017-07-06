@@ -34,20 +34,29 @@ namespace SiteSurveyor.Service
 				{
 					System.Diagnostics.Trace.TraceError(string.Format("error url : {0} {1}", item.Url, result.ErrorMessage), "error");
 
-					var smsService = new SmsService();
-					var message = new Models.Message();
-					message.Content = $"[{item.Url}] down detected from [{System.Environment.MachineName}] ! {result.ErrorMessage}";
-					foreach (var phone in item.PhoneNumberList)
-					{
-						message.MobileNumber = phone;
-						smsService.SendSMS(message);
+					Alert.Add(item.Url);
 
-						m_HistoryList.Add(new Models.History()
+					if (Alert.IsAlreadyFailed(item.Url))
+					{
+						var smsService = new SmsService();
+						var message = new Models.Message();
+						message.Content = $"[{item.Url}] down detected from [{System.Environment.MachineName}] ! {result.ErrorMessage}";
+						foreach (var phone in item.PhoneNumberList)
 						{
-							LastSentErrorDate = DateTime.Now,
-							PhoneNumber = phone,
-							Url = item.Url,
-						});
+							message.MobileNumber = phone;
+							smsService.SendSMS(message);
+
+							m_HistoryList.Add(new Models.History()
+							{
+								LastSentErrorDate = DateTime.Now,
+								PhoneNumber = phone,
+								Url = item.Url,
+							});
+						}
+					}
+					else
+					{
+						Alert.Remove(item.Url);
 					}
 				}
 			}
