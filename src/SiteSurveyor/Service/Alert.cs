@@ -12,6 +12,7 @@ namespace SiteSurveyor.Service
 		{
 			public string Url { get; set; }
 			public int AlertCount { get; set; }
+			public int SentCount { get; set; }
 		}
 
 		private static Lazy<Alert> m_Alert = new Lazy<Alert>(() =>
@@ -60,6 +61,7 @@ namespace SiteSurveyor.Service
 			}
 			return false;
 		}
+
 
 	}
 }

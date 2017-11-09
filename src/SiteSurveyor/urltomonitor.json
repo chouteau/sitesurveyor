@@ -1,9 +1,12 @@
 ﻿[
 
 	{
-		"url": "https://www.google.pro",
+		"url": "https://www.google.down",
 		"phoneNumberList": [
-			"+3360000000"
+			"+33600000000"
+		],
+		"emailList": [
+			"alert@alert.com"
 		]
 	}
 ]

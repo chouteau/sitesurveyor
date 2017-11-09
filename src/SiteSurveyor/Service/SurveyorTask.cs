@@ -38,26 +38,76 @@ namespace SiteSurveyor.Service
 
 					if (Alert.IsAlreadyFailed(item.Url))
 					{
-						var smsService = new SmsService();
-						var message = new Models.Message();
-						message.Content = $"[{item.Url}] down detected from [{System.Environment.MachineName}] ! {result.ErrorMessage}";
-						foreach (var phone in item.PhoneNumberList)
+						try
 						{
-							message.MobileNumber = phone;
-							smsService.SendSMS(message);
-
-							m_HistoryList.Add(new Models.History()
-							{
-								LastSentErrorDate = DateTime.Now,
-								PhoneNumber = phone,
-								Url = item.Url,
-							});
+							SendSMS(item, result.ErrorMessage);
+						}
+						catch { }
+						try
+						{
+							SendEmail(item, result.ErrorMessage);
+						}
+						catch { }
+					}
+					else 
+					{
+						var history = m_HistoryList.SingleOrDefault(i => i.Url == item.Url);
+						if (history != null
+							&& DateTime.Now > history.LastSentErrorDate)
+						{
+							Alert.Remove(item.Url);
 						}
 					}
-					else
-					{
-						Alert.Remove(item.Url);
-					}
+				}
+			}
+		}
+
+		private void SendSMS(Models.UrlToMonitor item, string errorMessage)
+		{
+			if (item.PhoneNumberList == null
+				|| item.PhoneNumberList.Count == 0)
+			{
+				return;
+			}
+			var smsService = new SmsService();
+			var message = new Models.Message();
+			message.Content = $"[{item.Url}] down detected from [{System.Environment.MachineName}] ! {errorMessage}";
+			foreach (var phone in item.PhoneNumberList)
+			{
+				message.MobileNumber = phone;
+				smsService.SendSMS(message);
+
+				m_HistoryList.Add(new Models.History()
+				{
+					LastSentErrorDate = DateTime.Now,
+					PhoneNumber = phone,
+					Url = item.Url,
+				});
+			}
+		}
+
+		private void SendEmail(Models.UrlToMonitor item, string errorMessage)
+		{
+			if (item.EmailList == null
+				|| item.EmailList.Count == 0)
+			{
+				return;
+			}
+			var smtpClient = new System.Net.Mail.SmtpClient();
+			var message = new System.Net.Mail.MailMessage();
+
+			foreach (var email in item.EmailList)
+			{
+				try
+				{
+					message.To.Add(email);
+					message.Subject = $"[{item.Url}] down detected from [{System.Environment.MachineName}]";
+					message.Body = errorMessage;
+					smtpClient.Send(message);
+				}
+				catch
+				{
+
 				}
 			}
 		}

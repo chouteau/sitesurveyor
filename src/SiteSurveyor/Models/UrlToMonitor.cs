@@ -10,5 +10,6 @@ namespace SiteSurveyor.Models
 	{
 		public string Url { get; set; }
 		public List<string> PhoneNumberList { get; set; }
+		public List<string> EmailList { get; set; }
 	}
 }
